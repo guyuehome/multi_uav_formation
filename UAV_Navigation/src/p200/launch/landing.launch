@@ -1,0 +1,68 @@
+<launch> 
+
+	<!-- 
+	search_alt_：预定搜索高度
+	markers_id_ ：ar_markers 二维码数字
+    desire_pose_x、desire_pose_y、desire_pose_z：期望的飞机相对降落板的位置,当desire_pose_z小于0.3m时会自动降落
+	PidXY_p：x,y方向p项系数
+	PidXY_d：x,y方向d项系数
+	PidXY_i：x,y方向i项系数
+	PidZ_p：z方向p项系数
+	PidZ_d：z方向d项系数
+	PidZ_i：z方向i项系数
+	PidYaw_p：yaw方向的p系数
+	PidYaw_d：yaw方向的d系数
+	PidYaw_i：yaw方向的i系数
+
+	关于其中的yaw角度，yaw为0度的情况是：摄像头图像左上为"0"markers时
+-->
+
+<!-- 
+	发布usb_camera tf
+-->
+	<node pkg="tf" type="static_transform_publisher" name="world_to_camera"
+		args="0 0 0.5 0 1.57 0 camera_link usb_camera_link 10"/>
+
+<!-- 
+	打开相机
+-->
+  <include file="$(find ros_vision)/launch/usb_cam_with_calibration.launch" >
+  </include>
+
+<!-- 
+	运行二维码检测
+marker_size:二维码大小，这里是边长是7.5cm的正方形
+-->
+
+  <include file="$(find ros_vision)/launch/ar_track_camera.launch"> 	
+    <arg name="marker_size" value="7.5" />
+    <arg name="max_new_marker_error" value="0.08" />
+    <arg name="max_track_error" value="0.2" />
+    <arg name="cam_image_topic" value="/camera/image_raw" />
+    <arg name="cam_info_topic" value="/camera/camera_info" />
+    <arg name="output_frame" value="/usb_camera_link" />
+
+  </include>
+<!-- 
+	运行二维码降落
+-->
+  <include file="$(find px4_control)/launch/landing.launch" >
+ 	<arg name="search_alt_" value="1.5" />
+ 	<arg name="markers_id_" value="4" />
+ 	<arg name="desire_pose_x" value="0" />
+ 	<arg name="desire_pose_y" value="0" />
+ 	<arg name="desire_pose_z" value="0.1" />
+ 	<arg name="desire_yaw_" value="0" />
+ 	<arg name="PidXY_p" value="1.2" />
+ 	<arg name="PidXY_d" value="0.15" />
+ 	<arg name="PidXY_i" value="0.001" />
+ 	<arg name="PidZ_p" value="0.2" />
+ 	<arg name="PidZ_d" value="0.1" />
+ 	<arg name="PidZ_i" value="0" />
+ 	<arg name="PidYaw_p" value="0" />
+ 	<arg name="PidYaw_d" value="0" />
+ 	<arg name="PidYaw_i" value="0" />
+  </include>
+
+</launch>
+

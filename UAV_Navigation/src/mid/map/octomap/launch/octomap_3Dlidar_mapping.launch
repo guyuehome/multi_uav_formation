@@ -1,0 +1,20 @@
+<launch>
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+        <param name="resolution" value="0.05" />
+
+        <!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+	    <param name="frame_id" type="string" value="odom" />
+<!-- Whether visualization should encode height with different colors -->
+	    <param name="height_map" type="bool" value="0" />
+<!--Color for visualizing occupied cells when heigh_map=False, in range [0:1] -->
+	    <param name="color"  value="0.5" />
+
+
+        <!-- maximum range to integrate (speedup!) -->
+        <param name="sensor_model/max_range" value="50" />
+
+        <!-- data source to integrate (PointCloud2) -->
+        <remap from="cloud_in" to="/3Dlidar16_scan" />
+
+    </node>
+</launch>

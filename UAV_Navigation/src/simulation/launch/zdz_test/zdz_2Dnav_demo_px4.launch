@@ -1,0 +1,37 @@
+<launch> 
+
+	<!-- offboard 模式下进行2D navigation-->
+	<!-- 
+	desire_posz_：期望高度 
+	-->
+
+  <!-- 参数设定-->	
+  <arg name="world_path" default="$(find simulation)/worlds/cloister.world" /> 
+  
+  <include file="$(find simulation)/launch/zdz_test/zdz_2Dlidar_px4.launch">
+    <arg name="world" value="$(arg world_path)" />
+  </include>
+
+    <param name="/uav0/mavros/local_position/tf/send" type="bool" value="true" />
+    <param name="/uav0/mavros/local_position/frame_id" type="str" value="base_link" />
+    <param name="/uav0/mavros/local_position/tf/frame_id" type="str" value="odom" />
+    <!-- 开启建图-->
+    <include file="$(find ros_slam)/launch/gmapping.launch">
+    <!--include file="$(find ros_slam)/launch/cartographer_2Dlidar_mapping.launch"-->
+    </include>
+    <!-- 开启导航-->
+    <include file="$(find ros_navigation)/launch/nav_px4.launch">
+    </include>
+    <!-- 将导航中的move_base输出转变成对px4无人机的飞控输出-->
+     <include file="$(find px4_control)/launch/ros_2DNav.launch">
+ 	<arg name="desire_posz_" value="2" />
+    </include>
+
+    <!--node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal - -tab -e">
+    <remap from="/uav0/mavros/cmd/arming" to="/uav/mavros/cmd/arming" />
+    <remap from="/uav0/mavros/set_mode" to="/uav/mavros/set_mode" />
+    <remap from="/uav0/mavros/rc/override" to="/uav/mavros/rc/override" />
+    </node-->
+
+</launch>
+

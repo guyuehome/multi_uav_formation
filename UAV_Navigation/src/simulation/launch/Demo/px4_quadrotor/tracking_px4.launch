@@ -1,0 +1,59 @@
+<launch> 
+
+	<!-- 
+		加载模型
+	-->
+  <include file="$(find simulation)/launch/px4/camera_front_car_px4.launch">
+  </include>
+
+	<!-- 
+		运行二维码检测
+		marker_size:二维码大小，这里是边长是40cm的正方形
+	-->
+  <include file="$(find ros_vision)/launch/ar_track_camera.launch" >
+    <arg name="marker_size" value="70" />
+    <arg name="max_new_marker_error" value="0.08" />
+    <arg name="max_track_error" value="0.2" />
+  </include>
+
+	<!-- 
+	二维码跟踪demo
+	search_alt_：预定搜索高度
+	markers_id_ ：ar_markers 二维码数字
+    desire_pose_x、desire_pose_y、desire_pose_z：期望的飞机相对二维码的位置
+	PidY_p：y方向p项系数
+	PidY_d：y方向d项系数
+	PidY_i：y方向i项系数
+	PidZ_p：z方向p项系数
+	PidZ_d：z方向d项系数
+	PidZ_i：z方向i项系数
+	PidYaw_p：yaw方向的p系数
+	PidYaw_d：yaw方向的d系数
+	PidYaw_i：yaw方向的i系数
+
+	关于其中的yaw角度，yaw为0度的情况是：摄像头图像左上为"0"markers时
+-->
+  <include file="$(find px4_control)/launch/tracking.launch" >
+ 	<arg name="search_alt_" value="3" />
+ 	<arg name="markers_id_" value="4" />
+ 	<arg name="desire_pose_x" value="6.5" />
+ 	<arg name="desire_pose_y" value="0" />
+ 	<arg name="desire_pose_z" value="0" />
+ 	<arg name="PidY_p" value="0.6" />
+ 	<arg name="PidY_d" value="0.04" />
+ 	<arg name="PidY_i" value="0.02" />
+ 	<arg name="PidZ_p" value="0.6" />
+ 	<arg name="PidZ_d" value="0.04" />
+ 	<arg name="PidZ_i" value="0.01" />
+ 	<arg name="PidYaw_p" value="0.4" />
+ 	<arg name="PidYaw_d" value="0.01" />
+ 	<arg name="PidYaw_i" value="0" />
+  </include>
+
+	<node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal --tab -e">
+    </node>
+
+   <!-- rviz view /-->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ros_vision)/config/ar_track_camera.rviz"/>
+</launch>
+

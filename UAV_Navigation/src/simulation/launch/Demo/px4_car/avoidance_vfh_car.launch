@@ -1,0 +1,20 @@
+<launch>
+
+<!--
+实现小车走QGC预定航点，并进行VFH实时避障
+-->
+
+<arg name="world_path" default="$(find simulation)/worlds/obstacle.world" />
+
+<include file="$(find simulation)/launch/px4/2Dlidar_rover_px4.launch">
+	<arg name="world" value="$(arg world_path)" />
+</include>
+
+
+<node pkg="px4_control" type="avoidance_car_vfh_node" name="avoidance_car_vfh_node" output="screen" launch-prefix="gnome-terminal --tab -e">
+
+</node>
+
+</launch>
+
+

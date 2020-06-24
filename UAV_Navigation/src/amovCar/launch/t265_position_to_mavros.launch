@@ -1,0 +1,46 @@
+<launch>
+
+
+<!--
+向飞控发送位置信息
+-->
+  <include file="$(find realsense2_camera)/launch/rs_t265.launch">
+	  <arg name="serial_no"           default=""/>
+	  <arg name="usb_port_id"         default=""/>
+	  <arg name="device_type"         default="t265"/>
+	  <arg name="json_file_path"      default=""/>
+	  <arg name="camera"              default="camera"/>
+
+	  <arg name="fisheye_width"       default="848"/> 
+	  <arg name="fisheye_height"      default="800"/>
+	  <arg name="enable_fisheye1"     default="true"/>
+	  <arg name="enable_fisheye2"     default="true"/>
+
+	  <arg name="fisheye_fps"         default="30"/>
+
+	  <arg name="gyro_fps"            default="200"/>
+	  <arg name="accel_fps"           default="62"/>
+	  <arg name="enable_gyro"         default="true"/>
+	  <arg name="enable_accel"        default="true"/>
+
+	  <arg name="enable_sync"           default="false"/>
+
+	  <arg name="linear_accel_cov"      default="0.01"/>
+	  <arg name="initial_reset"         default="false"/>
+	  <arg name="unite_imu_method"      default=""/>
+
+	  <arg name="publish_odom_tf"     default="true"/>
+
+  </include>
+
+
+  <include file="$(find mavros)/launch/px4.launch">
+	  <arg name="fcu_url"           default="/dev/ttyUSB0:921600"/>
+  </include>
+
+  <include file="$(find px4_control)/launch/t265_tf_to_mavros.launch">
+  </include>
+
+</launch>
+
+

@@ -1,0 +1,31 @@
+<launch> 
+
+	<!-- offboard 模式下进行2D navigation-->
+	<!-- 
+	desire_posz_：期望高度 
+	-->
+	
+  <arg name="world_path" default="$(find simulation)/worlds/cloister.world" />
+
+  <include file="$(find simulation)/launch/px4/2Dlidar_px4.launch">
+    <arg name="world" value="$(arg world_path)" />
+  </include>
+    <param name="/mavros/local_position/tf/send" type="bool" value="true" />
+    <param name="/mavros/local_position/frame_id" type="str" value="base_link" />
+    <param name="/mavros/local_position/tf/frame_id" type="str" value="odom" />
+
+    <include file="$(find ros_slam)/launch/gmapping.launch">
+    </include>
+
+    <include file="$(find ros_navigation)/launch/nav_px4.launch">
+    </include>
+
+     <include file="$(find px4_control)/launch/ros_2DNav.launch">
+ 	<arg name="desire_posz_" value="2" />
+    </include>
+ 
+    <node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal --tab -e">
+    </node>
+
+</launch>
+

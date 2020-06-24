@@ -1,0 +1,8 @@
+<launch>
+
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV1/"/>
+      <param name = "seq" type="int" value = '0'/>
+    </node> 
+    
+</launch>

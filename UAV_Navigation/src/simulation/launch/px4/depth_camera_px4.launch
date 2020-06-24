@@ -1,0 +1,32 @@
+<launch>
+
+    
+    <node pkg="tf" name="tf_depthCamera" type="static_transform_publisher" args="0 0 0 -1.57 0 -1.57 base_link depth_camera_link 100"/>
+
+    <!-- vehicle pose -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="R" default="0"/>
+    <arg name="P" default="0"/>
+    <arg name="Y" default="0"/>
+    <arg name="world" default="$(find simulation)/worlds/empty.world" />
+    <arg name="sdf" default="$(find simulation)/models/iris_depth_camera/iris_depth_camera.sdf" />
+    <arg name="verbose" default="false"/>
+    <arg name="debug" default="false"/>
+
+    <include file="$(find px4)/launch/mavros_posix_sitl.launch" >
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="R" value="$(arg R)"/>
+        <arg name="P" value="$(arg P)"/>
+        <arg name="Y" value="$(arg Y)"/>
+        <arg name="sdf" value="$(arg sdf)" />
+        <arg name="verbose" value="$(arg verbose)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="world" value="$(arg world)" />
+    </include>
+
+</launch>
+

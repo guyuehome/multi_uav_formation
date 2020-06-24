@@ -1,0 +1,178 @@
+<launch>
+  <arg name="mav_name" default="firefly"/>
+  <arg name="world_name" default="cloister"/>
+  <arg name="enable_logging" default="false" />
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="log_file" default="$(arg mav_name)" />
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+  <arg name="paused" default="true"/>
+  <!-- The following line causes gzmsg and gzerr messages to be printed to the console
+      (even when Gazebo is started through roslaunch) -->
+  <arg name="verbose" default="false"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find rotors_gazebo)/models"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="paused" value="$(arg paused)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="verbose" value="$(arg verbose)"/>
+  </include>
+  <group ns="UAV1">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV1"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="4.0"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV1/"/>
+      <param name = "seq" type="int" value = "0"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+  
+    <group ns="UAV2">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV2"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="2.4"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV2/"/>
+      <param name = "seq" type="int" value = "1"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+  
+      <group ns="UAV3">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV3"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="0.8"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV3/"/>
+      <param name = "seq" type="int" value = "2"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+  
+      <group ns="UAV4">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV4"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="-0.8"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV4/"/>
+      <param name = "seq" type="int" value = "3"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+   
+       <group ns="UAV5">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV5"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="-2.4"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV5/"/>
+      <param name = "seq" type="int" value = "4"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+  
+      <group ns="UAV6">
+    <include file="$(find rotors_gazebo)/launch/multi/multi_spawn_mav.launch">
+      <arg name="namespace" default="UAV6"/>
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" default="0.0"/>
+      <arg name="y" default="-4"/>
+      <arg name="z" default="0.1"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="motion_controller" pkg="rotors_teleop" type="rotors_formation_son.py" output="screen">
+      <param name = "UAV" type="string" value = "/UAV6/"/>
+      <param name = "seq" type="int" value = "5"/>
+    </node>
+    <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+</launch>

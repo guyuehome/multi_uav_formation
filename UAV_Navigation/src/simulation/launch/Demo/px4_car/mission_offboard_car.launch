@@ -1,0 +1,63 @@
+<launch>
+
+
+
+
+
+
+
+
+
+<!--
+实现小车在offboard模式下的走预定航点,其中的位置控制采用的是飞控中的NED坐标系，可参考这个博客：https://blog.csdn.net/qq_33641919/article/details/101003978
+-->
+
+	<arg name="step1_Pose_x" default="0" />
+	<arg name="step1_Pose_y" default="10" />
+
+	<arg name="step2_Pose_x" default="10" />
+	<arg name="step2_Pose_y" default="10" />
+
+	<arg name="step3_Pose_x" default="10" />
+	<arg name="step3_Pose_y" default="0" />
+
+	<arg name="step4_Pose_x" default="0" />
+	<arg name="step4_Pose_y" default="0" />
+
+<!--
+设定小车走航点速度范围为[0,1]
+-->
+	<arg name="desire_vel_" default="0.7" />
+
+
+
+
+  <arg name="world_path" default="$(find simulation)/worlds/amovCar.world" />
+
+  <include file="$(find simulation)/launch/px4/rover_px4.launch">
+    <arg name="world" value="$(arg world_path)" />
+  </include>
+
+
+	<node pkg="px4_control" type="mission_car_offboard_node" name="mission_car_offboard_node" output="screen">
+		<param name="step1_Pose_x" value = "$(arg step1_Pose_x)"/>	
+		<param name="step1_Pose_y" value = "$(arg step1_Pose_y)"/>
+
+		<param name="step2_Pose_x" value = "$(arg step2_Pose_x)"/>	
+		<param name="step2_Pose_y" value = "$(arg step2_Pose_y)"/>
+
+		<param name="step3_Pose_x" value = "$(arg step3_Pose_x)"/>	
+		<param name="step3_Pose_y" value = "$(arg step3_Pose_y)"/>
+
+		<param name="step4_Pose_x" value = "$(arg step4_Pose_x)"/>	
+		<param name="step4_Pose_y" value = "$(arg step4_Pose_y)"/>
+
+		<param name="desire_vel_" value = "$(arg desire_vel_)"/>
+
+
+
+	</node>
+
+</launch>
+
+

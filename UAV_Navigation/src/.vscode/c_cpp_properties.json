@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/bingo/project/some/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/bingo/project/some/Firmware/Tools/sitl_gazebo/include/**",
+                "/home/bingo/project/some/src/modules/px4_control/include/**",
+                "/home/bingo/project/some/src/sensor/camera/realsense_ros/realsense2_camera/include/**",
+                "/home/bingo/project/some/src/simulation/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

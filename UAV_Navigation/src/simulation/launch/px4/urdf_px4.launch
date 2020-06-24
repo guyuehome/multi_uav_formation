@@ -1,0 +1,73 @@
+<launch>
+
+   <!-- 注：rviz与gazebo需要打开不同的urdf-->
+
+    <!-- robot description for px4 sitl -->
+    <arg name="model_sitl" default="$(find simulation)/urdf/iris_depth_camera/xacro_sitl/urdf/iris_base.xacro" />
+    <arg name="mavlink_udp_port" default="14560"/>
+    <arg name="rotors_description_dir_sitl" default="$(find simulation)/urdf/iris_depth_camera/xacro_sitl" />
+    <arg name="cmd_sitl" default="$(find xacro)/xacro $(arg model_sitl) rotors_description_dir:=$(arg rotors_description_dir_sitl) mavlink_udp_port:=$(arg mavlink_udp_port) --inorder"/>
+    <param command="$(arg cmd_sitl)" name="robot_description_sitl" />
+
+    <!-- robot description for rviz -->
+    <arg name="model" default="$(find simulation)/urdf/iris_depth_camera/xacro/urdf/iris_base.xacro" />
+    <arg name="rotors_description_dir" default="$(find simulation)/urdf/iris_depth_camera/xacro" />
+    <arg name="cmd" default="$(find xacro)/xacro $(arg model) rotors_description_dir:=$(arg rotors_description_dir) mavlink_udp_port:=$(arg mavlink_udp_port) --inorder"/>
+    <param command="$(arg cmd)" name="robot_description" />
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+    <!-- PX4 configs -->
+    <arg name="est" default="ekf2"/>
+    <arg name="vehicle" default="iris"/>
+    <arg name="interactive" default="true"/>
+    <env name="PX4_SIM_MODEL" value="$(arg vehicle)" />
+    <env name="PX4_ESTIMATOR" value="$(arg est)" />
+    <!-- PX4 SITL and Gazebo -->
+    <arg unless="$(arg interactive)" name="px4_command_arg1" value="-d"/>
+    <arg     if="$(arg interactive)" name="px4_command_arg1" value=""/>
+    <node name="sitl" pkg="px4" type="px4" output="screen"
+        args="$(find px4)/ROMFS/px4fmu_common -s etc/init.d-posix/rcS $(arg px4_command_arg1)" required="true"/>
+
+    <!-- Launching gazebo -->
+    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/empty.world"/>
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="false"/>
+    <arg name="gui" default="true"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world)"/>
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- MAVROS -->
+    <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+	<arg name="gcs_url" default="" />
+	<arg name="respawn_mavros" default="false" />
+    <include file="$(find mavros)/launch/px4.launch">
+        <!-- GCS link is provided by SITL -->
+        <arg name="gcs_url" value=""/>
+        <arg name="fcu_url" value="$(arg fcu_url)"/>
+        <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+    </include>
+    <!-- mavros -->
+    <param name="/mavros/local_position/tf/send" type="bool" value="true" />
+    <param name="/mavros/local_position/frame_id" type="str" value="base_link" />
+    <param name="/mavros/local_position/tf/frame_id" type="str" value="map" />
+
+    <!-- spawn robot -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="R" default="0"/>
+    <arg name="P" default="0"/>
+    <arg name="Y" default="0"/>
+    <node name="$(anon vehicle_spawn)" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-param robot_description_sitl -urdf -model $(arg vehicle) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/>
+
+ 
+</launch>
+
+<!-- vim: set et ft=xml fenc=utf-8 ff=unix sts=0 sw=4 ts=4 : -->
